@@ -1,0 +1,56 @@
+# A local Documenso for the demo: Documenso's own docker/production/compose.yml (v2.21.1), pinned, with the app on
+# 127.0.0.1:3020 only, a self-signed signing certificate (docker/cert.p12, made by scripts/up.sh) and Mailpit
+# catching every email locally (http://localhost:8026): nothing is ever sent out. Settings in docker/.env.
+name: documenso-demo
+
+services:
+  database:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?err}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?err}
+      - POSTGRES_DB=${POSTGRES_DB:?err}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - database:/var/lib/postgresql/data
+
+  mailpit:
+    image: axllent/mailpit:v1.32.0
+    ports:
+      - "127.0.0.1:8026:8025"
+
+  documenso:
+    image: documenso/documenso:v2.21.1
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      - PORT=3000
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:?err}
+      - NEXT_PRIVATE_ENCRYPTION_KEY=${NEXT_PRIVATE_ENCRYPTION_KEY:?err}
+      - NEXT_PRIVATE_ENCRYPTION_SECONDARY_KEY=${NEXT_PRIVATE_ENCRYPTION_SECONDARY_KEY:?err}
+      - NEXT_PUBLIC_WEBAPP_URL=http://localhost:3020
+      - NEXT_PRIVATE_INTERNAL_WEBAPP_URL=http://localhost:3000
+      - NEXT_PRIVATE_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+      - NEXT_PRIVATE_DIRECT_DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+      - NEXT_PUBLIC_UPLOAD_TRANSPORT=database
+      - NEXT_PRIVATE_SMTP_TRANSPORT=smtp-auth
+      - NEXT_PRIVATE_SMTP_HOST=mailpit
+      - NEXT_PRIVATE_SMTP_PORT=1025
+      - NEXT_PRIVATE_SMTP_UNSAFE_IGNORE_TLS=true
+      - NEXT_PRIVATE_SMTP_FROM_NAME=Harbor Trading (SAMPLE)
+      - NEXT_PRIVATE_SMTP_FROM_ADDRESS=documents@harbor-trading.example
+      - NEXT_PRIVATE_SIGNING_TRANSPORT=local
+      - NEXT_PRIVATE_SIGNING_LOCAL_FILE_PATH=/opt/documenso/cert.p12
+      - NEXT_PRIVATE_SIGNING_PASSPHRASE=${SIGNING_PASSPHRASE:?err}
+    ports:
+      - "127.0.0.1:3020:3000"
+    volumes:
+      - ./cert.p12:/opt/documenso/cert.p12:ro
+
+volumes:
+  database:
