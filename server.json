@@ -1,0 +1,50 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.askmojood/documenso-mcp",
+  "title": "Documenso (Mojood Connect)",
+  "description": "Documenso in Claude: see who hasn't signed, send reminders and drafts after a yes.",
+  "repository": {
+    "url": "https://github.com/askmojood/documenso-mcp",
+    "source": "github"
+  },
+  "websiteUrl": "https://mojood.app/connect",
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "mojood-documenso-mcp",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "--stdio",
+          "valueHint": "--stdio"
+        }
+      ],
+      "environmentVariables": [
+        {
+          "name": "DOCUMENSO_URL",
+          "description": "Your Documenso address",
+          "isSecret": false,
+          "isRequired": true
+        },
+        {
+          "name": "DOCUMENSO_TOKEN",
+          "description": "A Documenso API token",
+          "isSecret": true,
+          "isRequired": true
+        },
+        {
+          "name": "DOCUMENSO_SAMPLE",
+          "description": "0 for real data (1 labels answers SAMPLE)",
+          "isSecret": false,
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

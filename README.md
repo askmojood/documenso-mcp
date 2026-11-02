@@ -1,5 +1,7 @@
 # Documenso MCP server
 
+<!-- mcp-name: io.github.askmojood/documenso-mcp -->
+
 Ask Claude about your contracts in plain words: which ones are still waiting, who hasn't signed (and who hasn't
 even opened them), what happened to one document. Send reminders and drafts from the same chat, with a confirmation
 step before any email goes out. There is no tool that signs on anyone's behalf.

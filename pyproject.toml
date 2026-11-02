@@ -1,5 +1,5 @@
 [project]
-name = "documenso-mcp"
+name = "mojood-documenso-mcp"
 version = "0.1.0"
 description = "Mojood Connect demo: an MCP server for Documenso (e-signing), with confirm-before-change writes."
 readme = "README.md"
@@ -11,8 +11,13 @@ dependencies = [
   "uvicorn>=0.54",
 ]
 
+[project.urls]
+Repository = "https://github.com/askmojood/documenso-mcp"
+Homepage = "https://mojood.app/connect"
+
 [project.scripts]
 documenso-mcp = "documenso_mcp.server:main"
+mojood-documenso-mcp = "documenso_mcp.server:main"
 documenso-seed = "documenso_mcp.seed:main"
 
 [dependency-groups]
